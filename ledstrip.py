@@ -4,18 +4,17 @@
 
 from time import sleep
 
-from rpi_ws281x.rpi_ws281x import Adafruit_NeoPixel
-
+from rpi_ws281x.rpi_ws281x import Adafruit_NeoPixel, Color
 
 # LED strip configuration:
-LED_COUNT = 16          # Number of LED pixels.
-LED_PIN = 18            # GPIO pin connected to the pixels (18 uses PWM!).
+LED_COUNT = 16  # Number of LED pixels.
+LED_PIN = 18  # GPIO pin connected to the pixels (18 uses PWM!).
 # LED_PIN = 10          # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
-LED_FREQ_HZ = 800000    # LED signal frequency in hertz (usually 800khz)
-LED_DMA = 10            # DMA channel to use for generating signal (try 10)
-LED_BRIGHTNESS = 255    # Set to 0 for darkest and 255 for brightest
-LED_INVERT = False      # True to invert the signal (when using NPN transistor level shift)
-LED_CHANNEL = 0         # set to '1' for GPIOs 13, 19, 41, 45 or 53
+LED_FREQ_HZ = 800000  # LED signal frequency in hertz (usually 800khz)
+LED_DMA = 10  # DMA channel to use for generating signal (try 10)
+LED_BRIGHTNESS = 255  # Set to 0 for darkest and 255 for brightest
+LED_INVERT = False  # True to invert the signal (when using NPN transistor level shift)
+LED_CHANNEL = 0  # set to '1' for GPIOs 13, 19, 41, 45 or 53
 
 
 class LedStrip:
@@ -40,8 +39,21 @@ class LedStrip:
 
         return cls._instance
 
-    def color_wipe(self, color, wait_ms=50):
-        """Wipe color across display a pixel at a time."""
+    def color_wipe(self, red_intensity, green_intensity, blue_intensity, wait_ms=50):
+        """
+            this function displays the specified color on the led strip by wiping it pixel by pixel.
+            :param red_intensity: intensity of red component of the color
+            :param green_intensity: intensity of green component of the color
+            :param blue_intensity: intensity of blue component of the color
+            :param wait_ms: time delay between changing each pixel/led
+        """
+        if (not 0 <= red_intensity <= 255 or
+                not 0 <= green_intensity <= 255 or
+                not 0 <= blue_intensity <= 255):
+            print('\033[91mError: intensity values must be between 0 & 255\033[0m')
+            return
+        color = Color(red_intensity, green_intensity, blue_intensity)
+        # Wipe color across display a pixel at a time.
         for i in range(self._strip.numPixels()):
             self._strip.setPixelColor(i, color)
             self._strip.show()
