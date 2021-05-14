@@ -6,7 +6,7 @@
 """
 from time import sleep
 
-from ledstrip import LedStrip
+from flaskr.ledstrip import LedStrip
 
 
 def main():

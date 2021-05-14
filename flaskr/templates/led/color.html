@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}{{ color|capitalize }}{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <h3>The led strip is set to {{ color }}.</h3>
+{% endblock %}
