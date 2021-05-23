@@ -51,6 +51,15 @@ def strip_blue():
     return render_template('led/color.html', color='blue')
 
 
+@bp.route('/rainbow')
+@login_required
+def strip_rainbow():
+    led_strip = LedStrip()
+    print('Rainbow.')
+    led_strip.rainbow()  # rainbow
+    return render_template('led/color.html', color='rainbow')
+
+
 @bp.route('/off')
 @login_required
 def strip_off():

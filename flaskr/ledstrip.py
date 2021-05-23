@@ -3,6 +3,7 @@
 """
 
 from time import sleep
+import multiprocessing
 
 from rpi_ws281x.rpi_ws281x import Adafruit_NeoPixel, Color
 
@@ -17,6 +18,18 @@ LED_INVERT = False  # True to invert the signal (when using NPN transistor level
 LED_CHANNEL = 0  # set to '1' for GPIOs 13, 19, 41, 45 or 53
 
 
+def wheel(pos):
+    """Generate rainbow colors across 0-255 positions."""
+    if pos < 85:
+        return Color(pos * 3, 255 - pos * 3, 0)
+    elif pos < 170:
+        pos -= 85
+        return Color(255 - pos * 3, 0, pos * 3)
+    else:
+        pos -= 170
+        return Color(0, pos * 3, 255 - pos * 3)
+
+
 class LedStrip:
     """
         This is a singleton class that contains a single instance of Adafruit_NeoPixel.
@@ -24,6 +37,7 @@ class LedStrip:
         form having more than one instance of Adafruit_NeoPixel running at a time.
     """
     _instance = None
+    _process: multiprocessing.Process = None
 
     def __new__(cls):
         if cls._instance is None:
@@ -31,7 +45,7 @@ class LedStrip:
             cls._instance = super(LedStrip, cls).__new__(cls)
             # Create NeoPixel object with appropriate configuration.
             print('Initializing strip')
-            cls._strip = Adafruit_NeoPixel(
+            cls._strip: Adafruit_NeoPixel = Adafruit_NeoPixel(
                 LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL
             )
             # Initialize the library (must be called once before other functions).
@@ -47,6 +61,7 @@ class LedStrip:
             :param blue_intensity: intensity of blue component of the color
             :param wait_ms: time delay between changing each pixel/led
         """
+        self._stop_process()
         if (not 0 <= red_intensity <= 255 or
                 not 0 <= green_intensity <= 255 or
                 not 0 <= blue_intensity <= 255):
@@ -58,3 +73,33 @@ class LedStrip:
             self._strip.setPixelColor(i, color)
             self._strip.show()
             sleep(wait_ms / 1000.0)
+
+    def rainbow(self):
+        """
+        Creates a process that runs the rainbow effect.
+        """
+        self._stop_process()
+        self._process = multiprocessing.Process(target=self._rainbow)
+        self._process.start()
+
+    def _rainbow(self, wait_ms=20, iterations=1):
+        """
+        Displays a rainbow effect on the led strip.
+        :param wait_ms: time between colors.
+        :param iterations: number of times to iterate through colors.
+        """
+        while True:
+            for j in range(256*iterations):
+                for i in range(self._strip.numPixels()):
+                    self._strip.setPixelColor(i, wheel((i+j) & 255))
+                self._strip.show()
+                sleep(wait_ms/1000.0)
+
+    def _stop_process(self):
+        """
+        Internal method that huts the subprocess running an infinite effect if it is running.
+        """
+        if self._process is not None:
+            if self._process.is_alive():
+                self._process.kill()
+                self._process = None

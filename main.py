@@ -1,7 +1,7 @@
 """
     This file is the entry pint for the project
-
-    This file was written by and is a property of Mojtaba Alkhalifah, a humble Software Engineering
+    (currently it is being used for testing purposes).
+     This file was written by and is a property of Mojtaba Alkhalifah, a humble Software Engineering
     graduate form King Fahd University of Petroleum and Minerals.
 """
 from time import sleep
@@ -19,21 +19,12 @@ def main():
         print('Color wipe White.')
         strip1.color_wipe(255, 255, 255)  # white wipe
         sleep(5)
-        strip2 = LedStrip()
-        print('Color wipe red.')
-        strip2.color_wipe(255, 0, 0)  # red wipe
+        print('running rainbow')
+        strip1.rainbow()
         sleep(5)
-        print('Color wipe green.')
-        strip2.color_wipe(0, 255, 0)  # green wipe
-        sleep(5)
-        print('Color wipe blue.')
-        strip2.color_wipe(0, 0, 255)  # blue wipe
-        sleep(5)
-        print('Testing unsupported color values.')
-        strip2.color_wipe(0, 0, 256)  # blue wipe
-        sleep(5)
-        print('Color wipe Off.')
-        strip1.color_wipe(0, 0, 0)
+        print('clearing')
+        strip1.color_wipe(0, 0, 0, 10)
+
     except KeyboardInterrupt:
         strip1.color_wipe(0, 0, 0, 10)
 
