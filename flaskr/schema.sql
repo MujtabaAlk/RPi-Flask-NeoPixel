@@ -15,10 +15,6 @@ CREATE TABLE user (
     FOREIGN KEY (type) REFERENCES user_type (id)
 );
 
-
--- ALTER TABLE user
--- ADD FOREIGN KEY (id) REFERENCES user_type(id);
-
 INSERT INTO user_type
     (title)
 VALUES

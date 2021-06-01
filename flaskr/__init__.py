@@ -1,11 +1,23 @@
+"""
+The LedFlask application package.
+"""
+
 import os
 
 from flask import Flask, send_from_directory, render_template
 
 from flaskr.ledstrip import LedStrip
+from . import db
+from . import auth
+from . import led
 
 
 def create_app(test_config=None):
+    """
+    A factory function that creates the LedFlask app instance.
+    :param test_config: The test configuration used when running tests.
+    :return: LedFlask app instance.
+    """
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
@@ -32,16 +44,14 @@ def create_app(test_config=None):
         return send_from_directory(os.path.join(app.root_path, 'static'),
                                    'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-
-    from . import db
+    # Add database
     db.init_app(app)
 
-    from . import auth
+    # Register apps
     app.register_blueprint(auth.bp)
-
-    from . import led
     app.register_blueprint(led.bp)
 
+    # Index route
     @app.route("/")
     def index():
         auth.load_logged_in_user()

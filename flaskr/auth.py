@@ -1,3 +1,6 @@
+"""
+This module is for the authentication blueprint.
+"""
 import functools
 
 from flask import (
@@ -12,6 +15,9 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.before_request
 def load_logged_in_user():
+    """
+    Loads the user information for the current request if a user is logged in.
+    """
     user_id = session.get('user_id')
 
     if user_id is None:
@@ -24,27 +30,31 @@ def load_logged_in_user():
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
+    """
+    A view for the registration page.
+    :return: a rendered template of the registration form or redirect to the login page.
+    """
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        db = get_db()
+        database = get_db()
         error = None
 
         if not username:
             error = 'Username is required.'
         elif not password:
             error = 'Password is required.'
-        elif db.execute(
+        elif database.execute(
             'SELECT id FROM user WHERE username = ?', (username,)
         ).fetchone() is not None:
             error = f'User {username} is already registered.'
 
         if error is None:
-            db.execute(
+            database.execute(
                 'INSERT INTO user (username, password) VALUES (?, ?)',
                 (username, generate_password_hash(password))
             )
-            db.commit()
+            database.commit()
             return redirect(url_for('auth.login'))
 
         flash(error)
@@ -54,12 +64,16 @@ def register():
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
+    """
+    A view for the login page.
+    :return:
+    """
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        db = get_db()
+        database = get_db()
         error = None
-        user = db.execute(
+        user = database.execute(
             'SELECT * FROM user WHERE username = ?', (username,)
         ).fetchone()
 
@@ -80,11 +94,20 @@ def login():
 
 @bp.route('/logout')
 def logout():
+    """
+    A log out view. Clears the current session.
+    :return: Redirect to the main page.
+    """
     session.clear()
     return redirect(url_for('index'))
 
 
 def login_required(view):
+    """
+    A wrapper function that ensures that the request is coming from a logged in user.
+    :param view: The function for the view being wrapped.
+    :return: The wrapped view function.
+    """
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:

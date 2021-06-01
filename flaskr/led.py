@@ -1,3 +1,6 @@
+"""
+This module is for the led blueprint which contains the routes used to control the LED strip.
+"""
 from flask import (
     Blueprint, render_template
 )
@@ -14,10 +17,14 @@ strip.color_wipe(0, 0, 0)
 bp.before_request(load_logged_in_user)
 
 
-# routes/pages to control LED strip
+# routes/pages
 @bp.route('/white')
 @login_required
 def strip_white():
+    """
+    Set the color of the LED strip to white.
+    :return: a rendered html template
+    """
     led_strip = LedStrip()
     print('Color wipe white.')
     led_strip.color_wipe(255, 255, 255)  # white wipe
@@ -27,6 +34,10 @@ def strip_white():
 @bp.route('/red')
 @login_required
 def strip_red():
+    """
+    Set the color of the LED strip to red.
+    :return: a rendered html template
+    """
     led_strip = LedStrip()
     print('Color wipe red.')
     led_strip.color_wipe(255, 0, 0)  # red wipe
@@ -36,6 +47,10 @@ def strip_red():
 @bp.route('/green')
 @login_required
 def strip_green():
+    """
+    Set the color of the LED strip to green.
+    :return: a rendered html template
+    """
     led_strip = LedStrip()
     print('Color wipe green.')
     led_strip.color_wipe(0, 255, 0)  # green wipe
@@ -45,6 +60,10 @@ def strip_green():
 @bp.route('/blue')
 @login_required
 def strip_blue():
+    """
+    Set the color of the LED strip to blue.
+    :return: a rendered html template
+    """
     led_strip = LedStrip()
     print('Color wipe blue.')
     led_strip.color_wipe(0, 0, 255)  # blue wipe
@@ -54,6 +73,10 @@ def strip_blue():
 @bp.route('/rainbow')
 @login_required
 def strip_rainbow():
+    """
+    Set the color of the LED strip to a rainbow cycle.
+    :return: a rendered html template
+    """
     led_strip = LedStrip()
     print('Rainbow.')
     led_strip.rainbow()  # rainbow
@@ -63,6 +86,10 @@ def strip_rainbow():
 @bp.route('/off')
 @login_required
 def strip_off():
+    """
+    Set the color of the LED strip to off.
+    :return: a rendered html template
+    """
     led_strip = LedStrip()
     print('Color wipe off.')
     led_strip.color_wipe(0, 0, 0)  # off wipe

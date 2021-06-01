@@ -1,6 +1,7 @@
 """
-    This is a module that houses a singleton class that houses the led strand object
+This is a module that houses a singleton class that houses the led strand object
 """
+from typing import Optional
 
 from time import sleep
 import multiprocessing
@@ -22,12 +23,12 @@ def wheel(pos):
     """Generate rainbow colors across 0-255 positions."""
     if pos < 85:
         return Color(pos * 3, 255 - pos * 3, 0)
-    elif pos < 170:
+    if pos < 170:
         pos -= 85
         return Color(255 - pos * 3, 0, pos * 3)
-    else:
-        pos -= 170
-        return Color(0, pos * 3, 255 - pos * 3)
+
+    pos -= 170
+    return Color(0, pos * 3, 255 - pos * 3)
 
 
 class LedStrip:
@@ -37,7 +38,7 @@ class LedStrip:
         form having more than one instance of Adafruit_NeoPixel running at a time.
     """
     _instance = None
-    _process: multiprocessing.Process = None
+    _process: Optional[multiprocessing.Process] = None
     color: str = "Off"
 
     def __new__(cls):
