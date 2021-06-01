@@ -1,6 +1,8 @@
 import os
 
-from flask import Flask, send_from_directory, request
+from flask import Flask, send_from_directory, render_template
+
+from flaskr.ledstrip import LedStrip
 
 
 def create_app(test_config=None):
@@ -30,20 +32,16 @@ def create_app(test_config=None):
         return send_from_directory(os.path.join(app.root_path, 'static'),
                                    'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-    # a simple page that says hello
-    @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
+    @app.route("/")
+    def index():
+        led_strip = LedStrip()
+        return render_template('led/color.html', color=led_strip.color)
 
     from . import db
     db.init_app(app)
 
     from . import auth
     app.register_blueprint(auth.bp)
-
-    from . import blog
-    app.register_blueprint(blog.bp)
-    app.add_url_rule('/', endpoint='index')
 
     from . import led
     app.register_blueprint(led.bp)

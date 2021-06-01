@@ -38,6 +38,7 @@ class LedStrip:
     """
     _instance = None
     _process: multiprocessing.Process = None
+    color: str = "Off"
 
     def __new__(cls):
         if cls._instance is None:
@@ -74,6 +75,13 @@ class LedStrip:
             self._strip.show()
             sleep(wait_ms / 1000.0)
 
+        color: str
+        if red_intensity == 0 and green_intensity == 0 and blue_intensity == 0:
+            color = "Off"
+        else:
+            color = f'Red: {red_intensity}, Green: {green_intensity}, Blue: {blue_intensity}'
+        self.color = color
+
     def rainbow(self):
         """
         Creates a process that runs the rainbow effect.
@@ -81,6 +89,7 @@ class LedStrip:
         self._stop_process()
         self._process = multiprocessing.Process(target=self._rainbow)
         self._process.start()
+        self.color = 'Rainbow'
 
     def _rainbow(self, wait_ms=20, iterations=1):
         """
